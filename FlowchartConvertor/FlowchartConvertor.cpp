@@ -1,0 +1,118 @@
+#include "FlowchartConvertor.h"
+
+
+namespace flowchart
+{
+	FlowchartConvertor::FlowchartConvertor(void)
+	{
+	}
+
+	bool FlowchartConvertor::ComputeShapeFeature(const Contour& a, cv::Mat& feat)
+	{
+		// compute normalized center distance values
+		// compute mean
+		cv::Point2f centerpt(0,0);
+		for(size_t i=0; i<a.size(); i++)
+		{
+			centerpt.x += (float)a[i].x / a.size();
+			centerpt.y += (float)a[i].y / a.size();
+		}
+
+		float maxdist = 0;
+		cv::Mat center_dists(1, a.size(), CV_32FC1);
+		for(size_t i=0; i<a.size(); i++)
+		{
+			float dist = \
+				sqrt( (a[i].x - centerpt.x)*(a[i].x - centerpt.x)+(a[i].y - centerpt.y)*(a[i].y - centerpt.y) );
+			center_dists.at<float>(0,i) = dist;
+			if(dist > maxdist)
+				maxdist = dist;
+		}
+
+		for(size_t i=0; i<center_dists.cols; i++)
+			center_dists.at<float>(i) /= maxdist;
+
+		// create histogram
+		cv::Mat hist;
+		int dbins = 10;
+		int histSize[] = {dbins};
+		// hue varies from 0 to 179, see cvtColor
+		float dranges[] = { 0, 1 };
+		const float* ranges[] = { dranges };
+		// we compute the histogram from the 0-th and 1-st channels
+		int channels[] = {0};
+		calcHist(&center_dists, 1, channels, cv::Mat(), hist, 1, histSize, ranges);
+
+		normalize(hist, hist, 1, 0, cv::NORM_L1);
+
+		/*for(int i=0; i<dbins; i++)
+			cout<<hist.at<float>(i)<<" ";*/
+
+		return true;
+	}
+
+	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& img, int type, bool draw)
+	{
+		cv::Mat gray;
+		cvtColor(img, gray, CV_BGR2GRAY); 
+		cv::blur(gray, gray, cvSize(3,3));
+		cv::imshow("blur", gray);
+		cv::Mat edgemap;
+		cv::Canny(gray, edgemap, 20, 100);
+		cv::imshow("canny", edgemap);
+		cv::waitKey(0);
+
+		// connect broken lines
+		//dilate(edgemap, edgemap, Mat(), Point(-1,-1));
+		//erode(edgemap, edgemap, Mat(), Point(-1,-1));
+
+		// detect contours and draw
+		cv::Mat edge_copy;
+		edgemap.copyTo(edge_copy);
+		Contours curves;
+		std::vector<cv::Vec4i> hierarchy;
+		findContours( edge_copy, curves, hierarchy, type, CV_CHAIN_APPROX_SIMPLE );
+
+		ShapeCollection res_shapes(curves.size());
+		for(size_t i=0; i<curves.size(); i++)
+		{
+			BasicShape& cur_shape = res_shapes[i];
+			cur_shape.type = SHAPE_UNKNOWN;
+			cur_shape.original_contour = curves[i];
+			approxPolyDP(cur_shape.original_contour, cur_shape.approx_contour, cv::arcLength(cv::Mat(cur_shape.original_contour), true)*0.02, true);
+			cur_shape.minRect = minAreaRect( cur_shape.approx_contour );
+			cur_shape.bbox = boundingRect(cur_shape.approx_contour);
+			cur_shape.area = contourArea(curves[i]);
+			cur_shape.perimeter = arcLength(curves[i], true);
+			cur_shape.isConvex = isContourConvex(cur_shape.approx_contour);
+			//res_shapes.push_back(cur_shape);
+		}
+
+		// draw detected contours
+		if(draw)
+		{
+			cv::Mat contourimg(img.rows, img.cols, CV_8UC3);
+			contourimg.setTo(255);
+			srand( time(NULL) );
+			for(size_t i=0; i<res_shapes.size(); i++)
+			{
+				if(res_shapes[i].area < min_shape_area)
+					continue;	// remove small contours
+
+				drawContours(contourimg, curves, i, CV_RGB(0, 255, 0));
+				//imshow("contours", contourimg);
+				//cout<<i<<endl;
+				//waitKey(0);
+			}
+
+			imshow("contours", contourimg);
+			imshow("edgemap", edgemap);
+			cv::waitKey(0);
+		}
+
+		return res_shapes;
+
+	}
+}
+
+
