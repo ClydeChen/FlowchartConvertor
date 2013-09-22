@@ -56,14 +56,16 @@ namespace flowchart
 		FlowchartConvertor(void);
 
 		ShapeCollection DetectShapes(const cv::Mat& img, int type, bool draw = false);
-	
+		
 		bool ComputeShapeFeature(const Contour& a, cv::Mat& feat);
 
 		Contour NormalizeContour(Contour& a, const cv::Point& center_pts);
 
+		BasicShapeType RecognizeShape(const BasicShape& query_shape);
+		
+		//////////////////////////////////////////////////////////////////////////
 		void DisplayContours(const Contours& a, int canvas_width, int canvas_height);
 
-		BasicShapeType RecognizeShape(const BasicShape& query_shape);
 	};
 }
 

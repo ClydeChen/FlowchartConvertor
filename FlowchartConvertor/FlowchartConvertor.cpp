@@ -113,6 +113,50 @@ namespace flowchart
 		return res_shapes;
 
 	}
+
+	Contour FlowchartConvertor::NormalizeContour(Contour& a, const cv::Point& center_pts)
+	{
+		Contour res_contour = a;
+		cv::Point mean(0,0);
+		for(size_t i=0; i<a.size(); i++)
+		{
+			mean.x += a[i].x;
+			mean.y += a[i].y;
+		}
+
+		mean.x /= a.size();
+		mean.y /= a.size();
+
+		cv::Point diff_mean(center_pts.x - mean.x, center_pts.y-mean.y);
+
+
+		for(size_t i=0; i<a.size(); i++)
+		{
+			res_contour[i].x = res_contour[i].x + diff_mean.x;
+			res_contour[i].y = res_contour[i].y + diff_mean.y;
+		}
+
+		return res_contour;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+	// visualization
+	void FlowchartConvertor::DisplayContours(const Contours& a, int canvas_width, int canvas_height)
+	{
+		cv::Mat img(canvas_height, canvas_width, CV_8UC3);
+		img.setTo(255);
+
+		// draw contour
+		for(size_t i=0; i<a.size(); i++)
+			drawContours(img, a, i, CV_RGB(0, 255, 0), 1.5);
+		// draw vertices
+		for(size_t i=0; i<a.size(); i++)
+			for(size_t j=0; j<a[i].size(); j++)
+				circle(img, a[i][j], 1, CV_RGB(255,0,0));
+
+		cv::imshow("contour", img);
+		cv::waitKey(0);
+	}
 }
 
 
