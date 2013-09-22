@@ -1,14 +1,17 @@
-﻿Build started 9/21/2013 2:12:57 AM.
-     1>Project "D:\Research\Projects\github\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" on node 2 (ClCompile target(s)).
-     1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt FlowchartConvertor.cpp
-         FlowchartConvertor.cpp
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(32): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(85): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(86): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(96): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>Done Building Project "D:\Research\Projects\github\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" (ClCompile target(s)).
+﻿Build started 9/22/2013 3:37:26 PM.
+     1>Project "F:\Projects\GitHub\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" on node 2 (Build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\FlowchartConvertor.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         FlowchartConvertor.vcxproj -> F:\Projects\GitHub\FlowchartConvertor\Debug\FlowchartConvertor.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug\FlowchartConvertor.unsuccessfulbuild".
+         Touching "Debug\FlowchartConvertor.lastbuildstate".
+     1>Done Building Project "F:\Projects\GitHub\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:04.47
+Time Elapsed 00:00:00.05

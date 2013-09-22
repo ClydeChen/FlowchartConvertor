@@ -7,6 +7,61 @@ namespace flowchart
 	{
 	}
 
+	Contour FlowchartConvertor::NormalizeContour(Contour& a, const cv::Point& center_pts)
+	{
+		Contour res_contour = a;
+		cv::Point mean(0,0);
+		for(size_t i=0; i<a.size(); i++)
+		{
+			mean.x += a[i].x;
+			mean.y += a[i].y;
+		}
+
+		mean.x /= a.size();
+		mean.y /= a.size();
+
+		cv::Point diff_mean(center_pts.x - mean.x, center_pts.y-mean.y);
+
+
+		for(size_t i=0; i<a.size(); i++)
+		{
+			res_contour[i].x = res_contour[i].x + diff_mean.x;
+			res_contour[i].y = res_contour[i].y + diff_mean.y;
+		}
+
+		return res_contour;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
+	bool FlowchartConvertor::PreprocessImg(const cv::Mat& img_in, cv::Mat& img_out)
+	{
+		if(img_in.channels() != 3 && img_in.channels() != 1)
+			return false;
+
+		cv::Mat gray_img;
+		if(img_in.channels() == 3)
+			cv::cvtColor(img_in, gray_img, cv::COLOR_BGR2GRAY);
+		else
+			img_in.copyTo(gray_img);
+
+		// compute edge magnitude
+		cv::Mat grad_x, grad_y, grad_mag;
+		cv::Sobel( gray_img, grad_x, CV_32F, 1, 0, 3, 1, 0, cv::BORDER_DEFAULT );
+		cv::Sobel( gray_img, grad_y, CV_32F, 0, 1, 3, 1, 0, cv::BORDER_DEFAULT );
+		cv::magnitude(grad_x, grad_y, grad_mag);
+		double minval, maxval;
+		cv::minMaxLoc(grad_mag, &minval, &maxval);
+		cv::normalize(grad_mag, grad_mag, 1, 0, cv::NORM_MINMAX);
+
+		cv::imshow("mag", grad_mag);
+		cv::waitKey(0);
+
+		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
+
 	bool FlowchartConvertor::ComputeShapeFeature(const Contour& a, cv::Mat& feat)
 	{
 		// compute normalized center distance values
@@ -51,7 +106,7 @@ namespace flowchart
 		return true;
 	}
 
-	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& img, int type, bool draw)
+	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& img, int contour_mode, bool draw)
 	{
 		cv::Mat gray;
 		cvtColor(img, gray, CV_BGR2GRAY); 
@@ -71,7 +126,7 @@ namespace flowchart
 		edgemap.copyTo(edge_copy);
 		Contours curves;
 		std::vector<cv::Vec4i> hierarchy;
-		findContours( edge_copy, curves, hierarchy, type, CV_CHAIN_APPROX_SIMPLE );
+		findContours( edge_copy, curves, hierarchy, contour_mode, CV_CHAIN_APPROX_SIMPLE );
 
 		ShapeCollection res_shapes(curves.size());
 		for(size_t i=0; i<curves.size(); i++)
@@ -112,31 +167,6 @@ namespace flowchart
 
 		return res_shapes;
 
-	}
-
-	Contour FlowchartConvertor::NormalizeContour(Contour& a, const cv::Point& center_pts)
-	{
-		Contour res_contour = a;
-		cv::Point mean(0,0);
-		for(size_t i=0; i<a.size(); i++)
-		{
-			mean.x += a[i].x;
-			mean.y += a[i].y;
-		}
-
-		mean.x /= a.size();
-		mean.y /= a.size();
-
-		cv::Point diff_mean(center_pts.x - mean.x, center_pts.y-mean.y);
-
-
-		for(size_t i=0; i<a.size(); i++)
-		{
-			res_contour[i].x = res_contour[i].x + diff_mean.x;
-			res_contour[i].y = res_contour[i].y + diff_mean.y;
-		}
-
-		return res_contour;
 	}
 
 	//////////////////////////////////////////////////////////////////////////

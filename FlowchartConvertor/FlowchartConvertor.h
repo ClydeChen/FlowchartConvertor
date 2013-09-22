@@ -52,18 +52,31 @@ namespace flowchart
 			return sqrt( (pt1.x-pt2.x)*(pt1.x-pt2.x)+(pt1.y-pt2.y)*(pt1.y-pt2.y) );
 		}
 
+		Contour NormalizeContour(Contour& a, const cv::Point& center_pts);
+
 	public:
 		FlowchartConvertor(void);
 
-		ShapeCollection DetectShapes(const cv::Mat& img, int type, bool draw = false);
-		
+		//////////////////////////////////////////////////////////////////////////
+
+		// preprocessing
+		bool PreprocessImg(const cv::Mat& img_in, cv::Mat& img_out);
+
+
+		//////////////////////////////////////////////////////////////////////////
+
+		// extract shape feature vector for recognition
 		bool ComputeShapeFeature(const Contour& a, cv::Mat& feat);
 
-		Contour NormalizeContour(Contour& a, const cv::Point& center_pts);
+		// extract shape contour from image
+		ShapeCollection DetectShapes(const cv::Mat& img, int contour_mode, bool draw = false);
 
+		// 
 		BasicShapeType RecognizeShape(const BasicShape& query_shape);
 		
 		//////////////////////////////////////////////////////////////////////////
+
+		// visualize
 		void DisplayContours(const Contours& a, int canvas_width, int canvas_height);
 
 	};
