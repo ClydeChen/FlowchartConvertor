@@ -68,8 +68,8 @@ namespace flowchart
 		// extract shape feature vector for recognition
 		bool ComputeShapeFeature(const Contour& a, cv::Mat& feat);
 
-		// extract shape contour from image
-		ShapeCollection DetectShapes(const cv::Mat& img, int contour_mode, bool draw = false);
+		// extract shape contour from preprocessed image
+		ShapeCollection DetectShapes(const cv::Mat& gray_img, int contour_mode, bool draw = false);
 
 		// 
 		BasicShapeType RecognizeShape(const BasicShape& query_shape);

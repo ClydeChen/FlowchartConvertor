@@ -85,7 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FlowchartConvertor.cpp" />
-    <ClCompile Include="main.cpp" />
+    <ClCompile Include="houghline.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

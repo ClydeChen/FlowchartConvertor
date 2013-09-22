@@ -44,6 +44,9 @@ namespace flowchart
 			cv::cvtColor(img_in, gray_img, cv::COLOR_BGR2GRAY);
 		else
 			img_in.copyTo(gray_img);
+		
+		// smooth
+		cv::GaussianBlur(gray_img, gray_img, cv::Size(3,3), 1);
 
 		// compute edge magnitude
 		cv::Mat grad_x, grad_y, grad_mag;
@@ -53,8 +56,12 @@ namespace flowchart
 		double minval, maxval;
 		cv::minMaxLoc(grad_mag, &minval, &maxval);
 		cv::normalize(grad_mag, grad_mag, 1, 0, cv::NORM_MINMAX);
+		cv::Mat grad_mag_th;
+		cv::threshold(grad_mag, grad_mag_th, 0.1, 1, cv::THRESH_TOZERO);
 
+		cv::imshow("gray", gray_img);
 		cv::imshow("mag", grad_mag);
+		cv::imshow("mag_th", grad_mag_th);
 		cv::waitKey(0);
 
 		return true;
@@ -106,14 +113,10 @@ namespace flowchart
 		return true;
 	}
 
-	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& img, int contour_mode, bool draw)
+	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& gray_img, int contour_mode, bool draw)
 	{
-		cv::Mat gray;
-		cvtColor(img, gray, CV_BGR2GRAY); 
-		cv::blur(gray, gray, cvSize(3,3));
-		cv::imshow("blur", gray);
 		cv::Mat edgemap;
-		cv::Canny(gray, edgemap, 20, 100);
+		cv::Canny(gray_img, edgemap, 20, 100);
 		cv::imshow("canny", edgemap);
 		cv::waitKey(0);
 
@@ -146,7 +149,7 @@ namespace flowchart
 		// draw detected contours
 		if(draw)
 		{
-			cv::Mat contourimg(img.rows, img.cols, CV_8UC3);
+			cv::Mat contourimg( gray_img.rows, gray_img.cols, CV_8UC3 );
 			contourimg.setTo(255);
 			srand( time(NULL) );
 			for(size_t i=0; i<res_shapes.size(); i++)

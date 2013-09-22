@@ -23,7 +23,7 @@
     <ClCompile Include="FlowchartConvertor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="houghline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
