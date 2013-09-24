@@ -73,6 +73,9 @@ namespace flowchart
 
 		// 
 		BasicShapeType RecognizeShape(const BasicShape& query_shape);
+
+		// total pipeline
+		bool ProcessImage(const cv::Mat& img_in);
 		
 		//////////////////////////////////////////////////////////////////////////
 

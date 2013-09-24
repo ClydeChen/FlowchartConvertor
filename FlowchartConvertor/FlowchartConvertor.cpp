@@ -58,10 +58,11 @@ namespace flowchart
 		cv::normalize(grad_mag, grad_mag, 1, 0, cv::NORM_MINMAX);
 		cv::Mat grad_mag_th;
 		cv::threshold(grad_mag, grad_mag_th, 0.1, 1, cv::THRESH_TOZERO);
+		grad_mag_th.convertTo(img_out, CV_8U, 255);
 
 		cv::imshow("gray", gray_img);
 		cv::imshow("mag", grad_mag);
-		cv::imshow("mag_th", grad_mag_th);
+		cv::imshow("mag_th", img_out);
 		cv::waitKey(0);
 
 		return true;
@@ -172,6 +173,17 @@ namespace flowchart
 
 	}
 
+	bool FlowchartConvertor::ProcessImage(const cv::Mat& img_in)
+	{
+		cv::Mat pre_img;
+		PreprocessImg(img_in, pre_img);
+
+		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_LIST, true);
+
+		return true;
+	}
+
+	//////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	// visualization
 	void FlowchartConvertor::DisplayContours(const Contours& a, int canvas_width, int canvas_height)
