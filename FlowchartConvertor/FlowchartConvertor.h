@@ -7,6 +7,7 @@
 
 #include <opencv2/opencv.hpp>
 #include <vector>
+#include <string>
 #include <time.h>
 
 namespace flowchart
@@ -46,6 +47,8 @@ namespace flowchart
 
 		float eps;
 		int min_shape_area;
+		cv::RNG rng_gen;	// random number generator
+		cv::Size newSize;
 
 		float PointDist(cv::Point2f& pt1, cv::Point2f& pt2)
 		{

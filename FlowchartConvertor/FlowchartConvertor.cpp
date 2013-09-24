@@ -5,6 +5,10 @@ namespace flowchart
 {
 	FlowchartConvertor::FlowchartConvertor(void)
 	{
+		rng_gen = cv::RNG(3456);
+		min_shape_area = 200;
+		eps = 0.1f;
+		newSize = cv::Size(400,400);
 	}
 
 	Contour FlowchartConvertor::NormalizeContour(Contour& a, const cv::Point& center_pts)
@@ -44,6 +48,8 @@ namespace flowchart
 			cv::cvtColor(img_in, gray_img, cv::COLOR_BGR2GRAY);
 		else
 			img_in.copyTo(gray_img);
+
+		cv::resize(gray_img, gray_img, newSize);
 		
 		// smooth
 		cv::GaussianBlur(gray_img, gray_img, cv::Size(3,3), 1);
@@ -63,7 +69,7 @@ namespace flowchart
 		cv::imshow("gray", gray_img);
 		cv::imshow("mag", grad_mag);
 		cv::imshow("mag_th", img_out);
-		cv::waitKey(0);
+		//cv::waitKey(0);
 
 		return true;
 	}
@@ -117,9 +123,11 @@ namespace flowchart
 	ShapeCollection FlowchartConvertor::DetectShapes(const cv::Mat& gray_img, int contour_mode, bool draw)
 	{
 		cv::Mat edgemap;
-		cv::Canny(gray_img, edgemap, 20, 100);
+		cv::Canny(gray_img, edgemap, 100, 200);
 		cv::imshow("canny", edgemap);
-		cv::waitKey(0);
+		cv::dilate(edgemap, edgemap, cv::Mat());
+		cv::erode(edgemap, edgemap, cv::Mat());
+		cv::waitKey(10);
 
 		// connect broken lines
 		//dilate(edgemap, edgemap, Mat(), Point(-1,-1));
@@ -144,7 +152,6 @@ namespace flowchart
 			cur_shape.area = contourArea(curves[i]);
 			cur_shape.perimeter = arcLength(curves[i], true);
 			cur_shape.isConvex = isContourConvex(cur_shape.approx_contour);
-			//res_shapes.push_back(cur_shape);
 		}
 
 		// draw detected contours
@@ -158,10 +165,10 @@ namespace flowchart
 				if(res_shapes[i].area < min_shape_area)
 					continue;	// remove small contours
 
-				drawContours(contourimg, curves, i, CV_RGB(0, 255, 0));
-				//imshow("contours", contourimg);
-				//cout<<i<<endl;
-				//waitKey(0);
+				CvScalar cur_color = CV_RGB(rng_gen.uniform(0,255), rng_gen.uniform(0,255), rng_gen.uniform(0,255));
+				drawContours(contourimg, curves, i, cur_color);
+				imshow("contours", contourimg);
+				cv::waitKey(0);
 			}
 
 			imshow("contours", contourimg);
@@ -173,12 +180,121 @@ namespace flowchart
 
 	}
 
+	BasicShapeType FlowchartConvertor::RecognizeShape(const BasicShape& query_shape)
+	{
+		BasicShapeType res_type = SHAPE_UNKNOWN;
+
+		if(query_shape.original_contour.empty())
+		{
+			std::cerr<<"Empty shape."<<std::endl;
+			return res_type;
+		}
+
+		// approximate contour
+		Contour approx_shape = query_shape.approx_contour;
+		float shapeArea = contourArea(approx_shape);
+		float boxArea = query_shape.minRect.size.area();
+
+		std::cout<<approx_shape.size()<<std::endl;
+
+		// triangle
+		if(approx_shape.size() >= 3 && approx_shape.size() <= 4)
+		{
+			// compute area ratio
+			float areaRatio = shapeArea / boxArea;
+			float diff = fabs(areaRatio-0.5);
+			if( diff < eps )
+				res_type = SHAPE_TRIGANGLE;
+		}
+
+		if( res_type == SHAPE_UNKNOWN && approx_shape.size() >= 4 && approx_shape.size() <= 5 )
+		{
+			// square or rectangle or parallelogram
+			// check if 4 angles are ~90
+
+			// use area to see if square or rectangle
+			float areaRatio = shapeArea / (query_shape.minRect.size.width*query_shape.minRect.size.width);
+			float diff = fabs(areaRatio-1);
+			if( diff < eps )
+				res_type = SHAPE_SQUARE;
+			else
+				res_type = SHAPE_RECTANGLE;
+
+		}
+
+		if( res_type == SHAPE_UNKNOWN )
+		{
+			float areaRatio = shapeArea / boxArea;
+			float diff = fabs(areaRatio-3.14/4.0);
+			if( diff < eps )
+				res_type = SHAPE_CIRCLE;
+		}
+
+		return res_type;
+	}
+
 	bool FlowchartConvertor::ProcessImage(const cv::Mat& img_in)
 	{
 		cv::Mat pre_img;
 		PreprocessImg(img_in, pre_img);
+		
+		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_TREE, false);
+		Contours cons;
 
-		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_LIST, true);
+		cv::Mat res_img(img_in.rows, img_in.cols, CV_8UC3);
+		res_img.setTo(255);
+		for(size_t i=0; i<shapes.size(); i++)
+		{
+			BasicShape curshape = shapes[i];
+
+			// compute contour area
+			if(curshape.area < min_shape_area || !curshape.isConvex)
+				continue;
+
+			// add to collection
+			cons.push_back(curshape.approx_contour);
+
+			// create color
+			cv::Scalar cur_color = CV_RGB(rng_gen.uniform(0,255), rng_gen.uniform(0,255), rng_gen.uniform(0,255));
+
+			BasicShapeType type = RecognizeShape( curshape );
+			std::string type_name;
+			if(type == SHAPE_CIRCLE)
+			{
+				type_name = "Circle";
+				// draw on result image
+				int diag = (int)sqrt(1.0f*curshape.bbox.width*curshape.bbox.width+1.0f*curshape.bbox.height*curshape.bbox.height);
+				circle( res_img, cv::Point(curshape.bbox.x+curshape.bbox.width/2, curshape.bbox.y+curshape.bbox.height/2),
+					diag/2, cur_color );
+			}
+			if(type == SHAPE_RECTANGLE)
+			{
+				type_name = "Rectangle";
+				drawContours( res_img, cons, cons.size()-1, cur_color );
+				//rectangle( res_img, curshape.bbox, cur_color );
+			}
+			if(type == SHAPE_SQUARE)
+			{
+				type_name = "Square";
+				rectangle( res_img, curshape.bbox, cur_color );
+			}
+			if(type == SHAPE_TRIGANGLE)
+			{
+				type_name = "Triangle";
+				drawContours( res_img, cons, cons.size()-1, cur_color );
+			}
+			if(type == SHAPE_UNKNOWN)
+			{
+				type_name = "Unknown";
+				drawContours( res_img, cons, cons.size()-1, cur_color );
+			}
+
+			// output text
+			cv::putText( res_img, type_name, cv::Point(curshape.bbox.x, curshape.bbox.br().y+15), cv::FONT_HERSHEY_PLAIN, 0.8, cur_color );
+		}
+
+		cv::imshow("res", res_img);
+		cv::waitKey(0);
 
 		return true;
 	}
