@@ -26,9 +26,16 @@ namespace flowchart
 		SHAPE_PARALLELOGRAM
 	};
 
+	enum ShapeFormatType
+	{
+		SF_CONTOUR,
+		SF_SEGMENT
+	};
+
 	struct BasicShape
 	{
 		BasicShapeType type;
+		ShapeFormatType format_type;
 		Contour original_contour;
 		Contour approx_contour;
 		int area;
@@ -37,6 +44,12 @@ namespace flowchart
 		cv::Mat mask;
 		cv::RotatedRect minRect;
 		bool isConvex;
+
+		BasicShape()
+		{
+			type = SHAPE_UNKNOWN;
+			format_type = SF_CONTOUR;
+		}
 	};
 
 
@@ -57,6 +70,9 @@ namespace flowchart
 		}
 
 		Contour NormalizeContour(Contour& a, const cv::Point& center_pts);
+
+		// floodfill from a start point
+		bool FloodFillMask(const cv::Mat& gray_img, cv::Point& seed, float loDiff, float upDiff, cv::Mat& mask);
 
 	public:
 		FlowchartConvertor(void);

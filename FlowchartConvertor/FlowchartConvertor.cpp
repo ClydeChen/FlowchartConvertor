@@ -36,6 +36,28 @@ namespace flowchart
 		return res_contour;
 	}
 
+	bool FlowchartConvertor::FloodFillMask(const cv::Mat& gray_img, cv::Point& seed, float loDiff, float upDiff, cv::Mat& mask)
+	{
+		cv::Mat dst = gray_img.clone();
+		mask.create(gray_img.rows+2, gray_img.cols+2, CV_8U);
+		mask.setTo(0);
+
+		// set params
+		int ffillMode = 1;
+		int connectivity = 4;
+		int newMaskVal = 255;
+		cv::Rect ccomp;
+
+		int flags = connectivity + (newMaskVal << 8) +
+			(ffillMode == 1 ? CV_FLOODFILL_FIXED_RANGE : 0);
+
+		cv::Scalar newVal = cv::Scalar(255);
+		int area = floodFill(dst, mask, seed, newVal, &ccomp, cv::Scalar(loDiff, loDiff, loDiff),
+			cv::Scalar(upDiff, upDiff, upDiff), flags);
+
+		return true;
+	}
+
 	//////////////////////////////////////////////////////////////////////////
 
 	bool FlowchartConvertor::PreprocessImg(const cv::Mat& img_in, cv::Mat& img_out)
@@ -153,6 +175,7 @@ namespace flowchart
 		{
 			BasicShape cur_shape;
 			cur_shape.type = SHAPE_UNKNOWN;
+			cur_shape.format_type = SF_CONTOUR;
 			cur_shape.original_contour = curves[i];
 			approxPolyDP(cur_shape.original_contour, cur_shape.approx_contour, cv::arcLength(cv::Mat(cur_shape.original_contour), true)*0.02, true);
 			cur_shape.minRect = minAreaRect( cur_shape.approx_contour );
@@ -164,7 +187,24 @@ namespace flowchart
 		}
 
 		// extract connection segments using floodfill
-
+		// use every unused point as seed point
+		cv::Mat tmask(edgemap.rows, edgemap.cols, CV_8U);
+		tmask.setTo(0);
+		for(int r=0; r<edgemap.rows; r++)
+		{
+			for(int c=0; c<edgemap.cols; c++)
+			{
+				if(edgemap.at<uchar>(r,c) > 0 && tmask.at<uchar>(r,c) == 0)
+				{
+					BasicShape connect_shape;
+					connect_shape.format_type = SF_SEGMENT;
+					FloodFillMask(edgemap, cv::Point(c, r), 10, 10, connect_shape.mask);
+					connect_shape.mask(cv::Rect(1,1, edgemap.cols, edgemap.rows)).copyTo(connect_shape.mask);	// refine mask: loss efficiency
+					res_shapes.push_back( connect_shape );
+					tmask |= connect_shape.mask;
+				}
+			}
+		}
 
 		// draw detected contours
 		if(draw)
