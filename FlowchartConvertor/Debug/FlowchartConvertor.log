@@ -1,16 +1,19 @@
-﻿Build started 9/24/2013 6:59:40 PM.
+﻿Build started 10/1/2013 12:31:40 PM.
      1>Project "D:\Research\Projects\github\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt FlowchartConvertor.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt FlowchartConvertor.cpp main.cpp
          FlowchartConvertor.cpp
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(101): warning C4018: '<' : signed/unsigned mismatch
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(152): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(153): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(162): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(195): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(205): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(228): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(312): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(105): warning C4018: '<' : signed/unsigned mismatch
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(160): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(161): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(171): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(204): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(214): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(237): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
+     1>d:\research\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(321): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+         Generating Code...
+         Skipping... (no relevant changes detected)
+         main.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\Research\Projects\github\FlowchartConvertor\Debug\FlowchartConvertor.exe" /INCREMENTAL /NOLOGO opencv_core245d.lib opencv_highgui245d.lib opencv_imgproc245d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\Research\Projects\github\FlowchartConvertor\Debug\FlowchartConvertor.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\Research\Projects\github\FlowchartConvertor\Debug\FlowchartConvertor.lib" /MACHINE:X86 Debug\FlowchartConvertor.obj
          Debug\main.obj
@@ -19,4 +22,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:03.04
+Time Elapsed 00:00:03.97

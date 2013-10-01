@@ -50,6 +50,9 @@ namespace flowchart
 			img_in.copyTo(gray_img);
 
 		cv::resize(gray_img, gray_img, newSize);
+
+		//gray_img.copyTo(img_out);
+		//return true;
 		
 		// smooth
 		cv::GaussianBlur(gray_img, gray_img, cv::Size(3,3), 1);
@@ -62,8 +65,9 @@ namespace flowchart
 		double minval, maxval;
 		cv::minMaxLoc(grad_mag, &minval, &maxval);
 		cv::normalize(grad_mag, grad_mag, 1, 0, cv::NORM_MINMAX);
+		// filter weak edges
 		cv::Mat grad_mag_th;
-		cv::threshold(grad_mag, grad_mag_th, 0.1, 1, cv::THRESH_TOZERO);
+		cv::threshold(grad_mag, grad_mag_th, 0.2, 1, cv::THRESH_TOZERO);
 		grad_mag_th.convertTo(img_out, CV_8U, 255);
 
 		cv::imshow("gray", gray_img);
@@ -124,9 +128,12 @@ namespace flowchart
 	{
 		cv::Mat edgemap;
 		cv::Canny(gray_img, edgemap, 100, 200);
-		cv::imshow("canny", edgemap);
+		cv::dilate(edgemap, edgemap, cv::Mat());
 		cv::dilate(edgemap, edgemap, cv::Mat());
 		cv::erode(edgemap, edgemap, cv::Mat());
+		cv::erode(edgemap, edgemap, cv::Mat());
+		//cv::erode(edgemap, edgemap, cv::Mat());
+		cv::imshow("canny", edgemap);
 		cv::waitKey(10);
 
 		// connect broken lines
@@ -140,10 +147,11 @@ namespace flowchart
 		std::vector<cv::Vec4i> hierarchy;
 		findContours( edge_copy, curves, hierarchy, contour_mode, CV_CHAIN_APPROX_SIMPLE );
 
-		ShapeCollection res_shapes(curves.size());
+		ShapeCollection res_shapes;
+		res_shapes.reserve(2*curves.size());
 		for(size_t i=0; i<curves.size(); i++)
 		{
-			BasicShape& cur_shape = res_shapes[i];
+			BasicShape cur_shape;
 			cur_shape.type = SHAPE_UNKNOWN;
 			cur_shape.original_contour = curves[i];
 			approxPolyDP(cur_shape.original_contour, cur_shape.approx_contour, cv::arcLength(cv::Mat(cur_shape.original_contour), true)*0.02, true);
@@ -152,7 +160,11 @@ namespace flowchart
 			cur_shape.area = contourArea(curves[i]);
 			cur_shape.perimeter = arcLength(curves[i], true);
 			cur_shape.isConvex = isContourConvex(cur_shape.approx_contour);
+			res_shapes.push_back( cur_shape );
 		}
+
+		// extract connection segments using floodfill
+
 
 		// draw detected contours
 		if(draw)
@@ -238,10 +250,10 @@ namespace flowchart
 		cv::Mat pre_img;
 		PreprocessImg(img_in, pre_img);
 		
-		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_TREE, false);
+		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_TREE, true);
 		Contours cons;
 
-		cv::Mat res_img(img_in.rows, img_in.cols, CV_8UC3);
+		cv::Mat res_img(pre_img.rows, pre_img.cols, CV_8UC3);
 		res_img.setTo(255);
 		for(size_t i=0; i<shapes.size(); i++)
 		{

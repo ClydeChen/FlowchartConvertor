@@ -34,6 +34,7 @@ namespace flowchart
 		int area;
 		int perimeter;
 		cv::Rect bbox;
+		cv::Mat mask;
 		cv::RotatedRect minRect;
 		bool isConvex;
 	};
@@ -62,7 +63,7 @@ namespace flowchart
 
 		//////////////////////////////////////////////////////////////////////////
 
-		// preprocessing
+		// preprocessing: from original image to clear edge image
 		bool PreprocessImg(const cv::Mat& img_in, cv::Mat& img_out);
 
 
