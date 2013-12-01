@@ -8,6 +8,7 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 #include <string>
+#include <fstream>
 #include <time.h>
 
 namespace flowchart

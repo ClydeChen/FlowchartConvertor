@@ -1,18 +1,10 @@
-﻿Build started 10/1/2013 4:19:52 PM.
+﻿Build started 12/1/2013 5:49:21 PM.
      1>Project "F:\Projects\GitHub\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\FlowchartConvertor.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt FlowchartConvertor.cpp
-         FlowchartConvertor.cpp
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(127): warning C4018: '<' : signed/unsigned mismatch
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(182): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(183): warning C4244: '=' : conversion from 'double' to 'int', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(211): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(244): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(254): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(277): warning C4244: 'initializing' : conversion from 'double' to 'float', possible loss of data
-     1>f:\projects\github\flowchartconvertor\flowchartconvertor\flowchartconvertor.cpp(361): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt main.cpp
+         main.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 11.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\Projects\GitHub\FlowchartConvertor\Debug\FlowchartConvertor.exe" /INCREMENTAL /NOLOGO opencv_core245d.lib opencv_highgui245d.lib opencv_imgproc245d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"F:\Projects\GitHub\FlowchartConvertor\Debug\FlowchartConvertor.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\Projects\GitHub\FlowchartConvertor\Debug\FlowchartConvertor.lib" /MACHINE:X86 Debug\FlowchartConvertor.obj
          Debug\main.obj
@@ -24,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.21
+Time Elapsed 00:00:02.18

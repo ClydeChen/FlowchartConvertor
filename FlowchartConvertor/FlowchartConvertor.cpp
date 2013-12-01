@@ -92,9 +92,9 @@ namespace flowchart
 		cv::threshold(grad_mag, grad_mag_th, 0.2, 1, cv::THRESH_TOZERO);
 		grad_mag_th.convertTo(img_out, CV_8U, 255);
 
-		cv::imshow("gray", gray_img);
-		cv::imshow("mag", grad_mag);
-		cv::imshow("mag_th", img_out);
+		//cv::imshow("gray", gray_img);
+		//cv::imshow("mag", grad_mag);
+		//cv::imshow("mag_th", img_out);
 		//cv::waitKey(0);
 
 		return true;
@@ -155,8 +155,8 @@ namespace flowchart
 		cv::erode(edgemap, edgemap, cv::Mat());
 		cv::erode(edgemap, edgemap, cv::Mat());
 		//cv::erode(edgemap, edgemap, cv::Mat());
-		cv::imshow("canny", edgemap);
-		cv::waitKey(10);
+		//cv::imshow("canny", edgemap);
+		//cv::waitKey(10);
 
 		// connect broken lines
 		//dilate(edgemap, edgemap, Mat(), Point(-1,-1));
@@ -287,14 +287,21 @@ namespace flowchart
 
 	bool FlowchartConvertor::ProcessImage(const cv::Mat& img_in)
 	{
+		cv::imshow("input image", img_in);
+
 		cv::Mat pre_img;
 		PreprocessImg(img_in, pre_img);
 		
-		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_TREE, true);
+		ShapeCollection shapes = DetectShapes(pre_img, CV_RETR_TREE, false);
 		Contours cons;
+
+		std::ofstream out("shapes.txt");
 
 		cv::Mat res_img(pre_img.rows, pre_img.cols, CV_8UC3);
 		res_img.setTo(255);
+
+		cv::Point img_sz(res_img.cols, res_img.rows);
+
 		for(size_t i=0; i<shapes.size(); i++)
 		{
 			BasicShape curshape = shapes[i];
@@ -318,34 +325,42 @@ namespace flowchart
 				int diag = (int)sqrt(1.0f*curshape.bbox.width*curshape.bbox.width+1.0f*curshape.bbox.height*curshape.bbox.height);
 				circle( res_img, cv::Point(curshape.bbox.x+curshape.bbox.width/2, curshape.bbox.y+curshape.bbox.height/2),
 					diag/2, cur_color );
+
+				out<<"circle ";
 			}
 			if(type == SHAPE_RECTANGLE)
 			{
 				type_name = "Rectangle";
 				drawContours( res_img, cons, cons.size()-1, cur_color );
 				//rectangle( res_img, curshape.bbox, cur_color );
+				out<<"rectangle ";
 			}
 			if(type == SHAPE_SQUARE)
 			{
 				type_name = "Square";
 				rectangle( res_img, curshape.bbox, cur_color );
+				out<<"squre ";
 			}
 			if(type == SHAPE_TRIGANGLE)
 			{
 				type_name = "Triangle";
 				drawContours( res_img, cons, cons.size()-1, cur_color );
+				out<<"triangle ";
 			}
 			if(type == SHAPE_UNKNOWN)
 			{
 				type_name = "Unknown";
 				drawContours( res_img, cons, cons.size()-1, cur_color );
+				out<<"unknown ";
 			}
 
+			out<<(curshape.bbox.x+curshape.bbox.width/2)-img_sz.x/2<<" "<<(curshape.bbox.y+curshape.bbox.height/2)-img_sz.y/2<<std::endl;
 			// output text
 			cv::putText( res_img, type_name, cv::Point(curshape.bbox.x, curshape.bbox.br().y+15), cv::FONT_HERSHEY_PLAIN, 0.8, cur_color );
 		}
 
 		cv::imshow("res", res_img);
+		cv::imwrite("result_img.jpg", res_img);
 		cv::waitKey(0);
 
 		return true;
