@@ -1,4 +1,4 @@
-﻿Build started 12/1/2013 5:49:21 PM.
+﻿Build started 12/2/2013 1:59:03 PM.
      1>Project "F:\Projects\GitHub\FlowchartConvertor\FlowchartConvertor\FlowchartConvertor.vcxproj" on node 2 (Build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\FlowchartConvertor.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -16,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:02.18
+Time Elapsed 00:00:03.52
